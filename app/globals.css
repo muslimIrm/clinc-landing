@@ -1,26 +1,102 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Color */
+  --primary-color: #14967f;
+  /* اللون الأساسي */
+  --accent-color: #fad169;
+  /* لون التمييز */
+
+  /* Neutral Colors */
+  --text-main: #191919;
+  /* العناوين والنصوص */
+  --text-muted: #6B7280;
+  /* النصوص الثانوية */
+
+  /* Background & Surface */
+  --bg-surface: #f4f4f4;
+  /* خلفية الأقسام */
+  --bg-white: #ffffff;
+  /* خلفية الصفحة */
+
+
+
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary-color);
+  --color-accent: var(--accent-color);
+
+  --color-main: var(--text-main);
+  --color-muted: var(--text-muted);
+
+  --color-surface: var(--bg-surface);
+  --color-background: var(--bg-white);
+
+  --font-en: var(--font-lt);
+
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+
+
+
+* {
+
+  box-sizing: border-box;
+  padding: 0;
+
+}
+
+html{
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-white);
+  overflow-x: hidden;
+  font-family: var(--font-ar);
+
+}
+
+.slidDown {
+
+  animation: slidDown 0.3s ease-in-out forwards;
+}
+
+.slidUp {
+
+  animation: slidUp 0.3s ease-in-out forwards;
+}
+
+@keyframes slidDown {
+  0% {
+    background: transparent;
+    height: 0;
+  }
+
+  100% {
+    background: var(--primary-color) !important;
+    height: 130px;
+
+  }
+
+
+}
+
+@keyframes slidUp {
+  0% {
+    height: 130px;
+
+    background: var(--primary-color);
+
+  }
+
+  100% {
+    height: 0;
+    background: transparent;
+  }
+
+
 }
