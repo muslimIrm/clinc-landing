@@ -29,11 +29,18 @@ const MyAp = () => {
         setLoadingSpinnerState(false)
         const fetchData = async () => {
             setLoadingSpinnerState(true)
-            const result = await handleRequest(getMyAppointments, null);
-            setLoadingSpinnerState(false)
-            setData(result.data ? result.data : []);
+            try {
+                const result = await handleRequest(getMyAppointments, null);
+                setData(result.data ? result.data : []);
+
+            } finally {
+
+                setLoadingSpinnerState(false)
+            }
+
         };
         fetchData();
+
     }, [])
     const openModelHandler = (data: Data) => {
         setDataCard(data)
@@ -46,7 +53,7 @@ const MyAp = () => {
         setDataCard(null)
     }
 
-    useEffect(()=>{console.log(data)}, [data])
+    useEffect(() => { console.log(data) }, [data])
     const toggleLoadingSpinner = () => {
         setLoadingSpinnerState(prev => !prev)
     }
@@ -67,9 +74,9 @@ const MyAp = () => {
                     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
                         {
                             data.length > 0 &&
-                                data.map((item, index) => (
-                                    <Card key={index} toggleLoadingSpinner={toggleLoadingSpinner} data={{...item, appointmentDate : item.appointmentDate.split("T")[0]}} onOpen={openModelHandler} />
-                                ))
+                            data.map((item, index) => (
+                                <Card key={index} toggleLoadingSpinner={toggleLoadingSpinner} data={{ ...item, appointmentDate: item.appointmentDate.split("T")[0] }} onOpen={openModelHandler} />
+                            ))
                         }
                     </div>
                     {
@@ -90,8 +97,8 @@ const MyAp = () => {
             <span className="fixed bottom-0 left-1/2 -z-1 w-40 h-40 inline-flex rounded-full bg-primary/25  shadow-primary/25 shadow-[0_0_100px_200px] max-md:shadow-[0_0_100px_100px] max-sm:shadow-[0_0_120px_120px] max-sm:w-10 max-sm:h-10"></span>
 
             <Model isOpen={openModel} onClose={closeModelHandler} data={dataCard} />
-            
-            <LoadingSpinner state={loadingSpinnerState}/>
+
+            <LoadingSpinner state={loadingSpinnerState} />
         </div>
     )
 }

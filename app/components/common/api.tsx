@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { isAxiosError } from "axios"
 const instance = axios.create({
    withCredentials: true,
    baseURL: "https://clinc-landing-backend.onrender.com/api"
@@ -18,30 +18,35 @@ interface complaintData {
     phone: string,
     subject: string,
     complaint: string
-}
-
-export async function handleRequest<T>(
+}export async function handleRequest<T>(
     requestFn: (data: any) => Promise<T>,
-    data: any,                            
-    successMessage?: string               
+    data?: any,
+    successMessage?: string
 ): Promise<T | null> {
     try {
         const res = await requestFn(data);
-        console
         if (successMessage) alert(successMessage);
         return res;
-    } catch (error: any) {
-        if (error.response) {
-            console.error("Server error:", error.response.data.errors[0]?.msg);
-            alert(error.response.data.errors[0]?.msg || "فشل الإرسال");
+
+    } catch (error: unknown) {
+
+        if (isAxiosError(error)) {
+            const msg =
+                error.response?.data?.errors?.[0]?.msg ||
+                error.response?.data?.message ||
+                "فشل الإرسال";
+            alert(msg);
+
+        } else if (error instanceof Error) {
+            alert("حدث خطأ: " + error.message);
+
         } else {
-            console.error("Unknown error:", error.message);
-            alert("فشل الإرسال: " + error.message);
+            alert("حدث خطأ غير متوقع");
         }
+
         return null;
     }
 }
-
 
 export const bookingAppointment =async (data: appointmentData) => {
     try {
