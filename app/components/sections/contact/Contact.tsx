@@ -5,7 +5,8 @@ import Title from "../../common/Title";
 import { useState } from "react";
 
 import Button from "../../common/Button";
-
+import { bookingAppointment, complaint, handleRequest } from "../../common/api"
+import LoadingSpinner from "../../common/LoadingSpinner";
 interface Doctor {
     id: number;
     name: string;
@@ -21,12 +22,78 @@ const doctors: Doctor[] = [
     { id: 6, name: "خالد ناصر", specialty: "جراحة عامة" },
 ];
 
+interface BookingComplaintData {
+    name: string;
+    age: number | string;
+    phone: string;
+    doctor: string;
+    appointmentDate: string;
+    subject: string;
+    complaint: string;
+}
 
 const Contact = () => {
     const [toggalModel, setToggalMode] = useState<boolean>(true)
     const today = new Date().toISOString().split('T')[0];
+    const [bookingComplaintData, setBookingComplaintData] = useState<BookingComplaintData>({
+        name: "",
+        age: null!,
+        phone: "",
+        doctor: "",
+        appointmentDate: today,
+        subject: "",
+        complaint: "",
+    })
+    const [loadingSpinnerState, setLoadingSpinnerState] = useState<boolean>(false)
+
+    const toggleLoadingSpinner = () => {
+        setLoadingSpinnerState(prev => !prev)
+    }
+    const handleSubmit = async (p: any) => {
+        p.preventDefault();
+        if (toggalModel) {
+            toggleLoadingSpinner()
+            const data = {
+
+                name: bookingComplaintData.name,
+                phone: bookingComplaintData.phone,
+                doctor: bookingComplaintData.doctor,
+                appointmentDate: bookingComplaintData.appointmentDate,
+                age: bookingComplaintData.age
+            }
+            await handleRequest<BookingComplaintData>(bookingAppointment, data, "تم حجز موعدك بنجاح!")
+            toggleLoadingSpinner()
+        } else {
+            toggleLoadingSpinner()
+            const data = {
+                name: bookingComplaintData.name,
+                phone: bookingComplaintData.phone,
+                subject: bookingComplaintData.subject,
+                complaint: bookingComplaintData.complaint,
+            }
+            await handleRequest<BookingComplaintData>(complaint, data, "تم ارسال الشكوى شكرا جزيلا!")
+            toggleLoadingSpinner()
+        }
+        setBookingComplaintData({
+            name: "",
+            age: "",
+            phone: "",
+            doctor: "",
+            appointmentDate: today,
+            subject: "",
+            complaint: "",
+        })
+    }
+
+    const handleChange = (e: any) => {
+
+        setBookingComplaintData((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value
+        }))
+    }
     return (
-        <section id="booking">
+        <section id="booking" className=" relative">
             <Container className=" grid grid-cols-2 max-md:grid-cols-1">
                 <div className="flex flex-col !gap-y-3">
                     <Title title="تواصل معنا" />
@@ -41,30 +108,30 @@ const Contact = () => {
                     </div>
                 </div>
                 <div className="flex items-center justify-center w-full h-full p-4!">
-                    <form className="w-full flex flex-col !gap-y-6 h-full bg-linear-to-b from-accent to-primary !px-5 !py-4 rounded-2xl" onSubmit={(p) => p.preventDefault()}>
+                    <form className="w-full flex flex-col !gap-y-6 h-full bg-linear-to-b from-accent to-primary !px-5 !py-4 rounded-2xl" onSubmit={(p) => handleSubmit(p)}>
                         <div className="w-full flex items-center justify-center">
                             <div className="bg-background/60 rounded-full backdrop-blur-3xl px-3! py-2! flex gap-3!">
-                                <button className={`${toggalModel && "bg-accent"} rounded-full text-black px-3! py-1! translate duration-300`} onClick={() => setToggalMode(true)}>حجز موعد</button>
-                                <button className={`${!toggalModel && "bg-accent"} rounded-full text-black px-3! py-1! translate duration-300`} onClick={() => setToggalMode(false)}>ارسال شكوى</button>
+                                <div className={`${toggalModel && "bg-accent"} cursor-pointer rounded-full text-black px-3! py-1! translate duration-300`} onClick={() => setToggalMode(true)}>حجز موعد</div>
+                                <div className={`${!toggalModel && "bg-accent"} cursor-pointer rounded-full text-black px-3! py-1! translate duration-300`} onClick={() => setToggalMode(false)}>ارسال شكوى</div>
                             </div>
                         </div>
                         <h1 className="text-5xl text-background">{toggalModel ? "احجز موعدك" : "ارسل شكوتك"}</h1>
                         <div className="flex flex-col !gap-1">
                             <label className="text-background">الاسم الثلاثي</label>
-                            <input className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" placeholder="محمد علي حسن" />
+                            <input required className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" value={bookingComplaintData.name} placeholder="محمد علي حسن" name="name" onChange={handleChange} />
                         </div>
 
                         <div className="flex flex-col !gap-1">
                             <label className="text-background">رقم الهاتف</label>
-                            <input className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" placeholder="07000000000" type="number" />
+                            <input required className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" value={bookingComplaintData.phone} placeholder="07000000000" type="tel" name="phone" onChange={handleChange} />
                         </div>
                         {toggalModel ? (<><div className="flex flex-col !gap-1">
                             <label className="text-background">طبيبك المناسب</label>
-                            <select className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" defaultValue={""}>
+                            <select required className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" value={bookingComplaintData.doctor} name="doctor" onChange={handleChange}>
                                 <option value="" disabled>اختر الطبيب المناسب...</option>
 
                                 {doctors.map((doctor) => (
-                                    <option key={doctor.id} value={doctor.id}>
+                                    <option key={doctor.id} value={doctor.name}>
                                         د. {doctor.name} ({doctor.specialty})
                                     </option>
                                 ))}
@@ -73,22 +140,36 @@ const Contact = () => {
 
                             <div className="flex flex-col !gap-1">
                                 <label className="text-background">الموعد المناسب</label>
-                                <input className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3! w-full" type="date" defaultValue={today} />
-                            </div></>) :
+                                <input required className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3! w-full" value={bookingComplaintData.appointmentDate} type="date" name="appointmentDate" onChange={handleChange} />
+                            </div>
                             <div className="flex flex-col !gap-1">
-                                <label className="text-background">شكوتك</label>
-                                <textarea rows={5} className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" placeholder="اكتب تفاصيل الشكوى هنا" />
+                                <label className="text-background">عمرك</label>
+                                <input required className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3! w-full" value={bookingComplaintData.age} placeholder="مثل 29" name="age" onChange={handleChange} />
+
+
+                            </div>
+                        </>) :
+                            <div className="flex flex-col !gap-4">
+                                <div className="flex flex-col !gap-1">
+                                    <label className="text-background">عنوان الشكوى</label>
+                                    <input required className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" value={bookingComplaintData.subject} placeholder="اكتب عنوان الشكوى هنا" name="subject" onChange={handleChange} />
+                                </div>
+                                <div className="flex flex-col !gap-1">
+                                    <label className="text-background">شكوتك</label>
+                                    <textarea required rows={5} className="rounded-xl outline-0 border border-background bg-slate-200/60 backdrop-blur-2xl p-3!" value={bookingComplaintData.complaint} placeholder="اكتب تفاصيل الشكوى هنا" name="complaint" onChange={handleChange} />
+                                </div>
                             </div>
                         }
 
                         <div className="flex items-center justify-center">
-                            <Button title={`ارسال ${toggalModel ? "الحجز" : "الشكوى"}`} className="bg-accent text-black hover:bg-[#f5c650] " styleArrow="hidden" />
+                            <button className={"!px-6 !py-2 shadow-md translate duration-300 bg-accent text-black hover:bg-[#f5c650] hover:shadow-lg  rounded-3xl text-lg flex !gap-2 items-center group cursor-pointer"} type="submit">{`ارسال ${toggalModel ? "الحجز" : "الشكوى"}`}</button>
 
 
                         </div>
                     </form>
                 </div>
             </Container>
+            <LoadingSpinner state={loadingSpinnerState} />
         </section>
     )
 }

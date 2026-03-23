@@ -5,7 +5,7 @@ import Container from "../../common/Container"
 import Title from "../../common/Title"
 import Image from "next/image"
 import Button from "../../common/Button"
-import AccordionItem from "../../common/Accordion"
+import { AnimatePresence, motion } from "framer-motion"
 
 
 interface Department {
@@ -100,16 +100,27 @@ const Services = () => {
 
                                     <div key={d.id} onClick={() => { handel(d.code, index) }} className={`${state === d.code ? "bg-primary" : "bg-transparent"} text-black translate duration-200 rounded-2xl !px-6 !py-4`}>
                                         <h1 className={`${state === d.code ? "text-background" : "text-black"} text-2xl`}>{d.name}</h1>
-                                        <div className={`${state === d.code ? "slidDown" : "slidUp"} text-background translate overflow-hidden duration-200 flex flex-col !gap-4  rounded-2xl`}>
-                                            <p>
-                                                {
-                                                    d.description
-                                                }
-                                            </p>
-                                            <Button title="احجز موعد مع الطبيب" href="#booking" styleArrow="text-black" className="bg-accent text-black text-sm !px-3 !py-2 w-fit" />
 
-                                            <div className={`w-full h-[1px] bg-slate-300 rounded-2xl ${state === d.code && "hidden"} !mt-2`}></div>
-                                        </div>
+                                        <AnimatePresence>
+                                            {state === d.code && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: "auto", opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                                    style={{ overflow: "hidden" }}
+                                                    className="text-background flex flex-col !gap-4 rounded-2xl"
+                                                >
+                                                    <p>{d.description}</p>
+                                                    <Button
+                                                        title="احجز موعد مع الطبيب"
+                                                        href="#booking"
+                                                        styleArrow="text-black"
+                                                        className="bg-accent text-black text-sm !px-3 !py-2 w-fit"
+                                                    />
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 )
                             })
@@ -119,10 +130,10 @@ const Services = () => {
 
 
                     <div className="flex items-center justify-center">
-                        <div className="relative w-[60%] max-md:w-[80%] flex items-center justify-center">
+                        <div className="relative w-[70%] max-md:w-[80%] flex items-center justify-center">
 
                             <Image
-                                src={`/${image}`}
+                                src={`/image_serv.png`}
                                 unoptimized
                                 height={100}
                                 width={100}
@@ -130,6 +141,7 @@ const Services = () => {
                                 className="w-full h-auto rounded-2xl shadow relative z-10"
                             />
 
+                            
                             <div className="absolute inset-0 bg-primary -z-10 translate-x-2 scale-y-[0.95] rounded-2xl"></div>
 
                             <div className="absolute inset-0 bg-primary/50 -z-10 translate-x-4 scale-y-[0.90] rounded-2xl"></div>
