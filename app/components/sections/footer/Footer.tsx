@@ -43,7 +43,7 @@ const Footer = () => {
                 {/* القسم الأول: العنوان - يظهر في البداية أو الأعلى */}
                 <div className="flex flex-col gap-2! text-center md:text-right">
                     <span className="text-lg font-bold">العنوان</span>
-                    <span>العراق - سفوان - "شارع المكاتب قرب مكتبة الشاهين</span>
+                    <span>بغداد - الكرخ الاثنية - "شارع المكاتب قرب مكتبة الشاهين</span>
                     <p><span className="text-muted">مفتوح</span> 24 ساعة, و7 ايام <span className="text-muted">بالاسبوع</span></p>
                 </div>
 
