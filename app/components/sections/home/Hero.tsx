@@ -23,7 +23,7 @@ const STATS_DATA: StatItem[] = [
     },
     {
         id: 2,
-        title: "البصرة - صفوان",
+        title: "بغداد - الكرخ الثانية",
         subTitle: "شارع المكاتب قرب مكتبة الشاهين",
         icon: FaLocationDot
     },

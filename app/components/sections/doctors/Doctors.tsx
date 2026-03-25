@@ -78,7 +78,7 @@ const Doctors = () => {
                         (
                             <div key={d.id} onClick={() => handleDoctorClick(d)} className="flex flex-col gap-3! bg-primary/5 rounded-2xl shadow p-2! translate duration-300 hover:bg-linear-to-b hover:from-accent/90 hover:via-primary hover:to-primary group">
                                 <div className="w-full bg-background rounded-2xl shadow overflow-hidden">
-                                    <Image src={d.image} width={100} height={100} alt="image" className="w-full" unoptimized />
+                                    <Image src={d.image} width={100} height={100} alt="image" className="w-full" />
                                 </div>
                                 <div className="flex flex-col ">
                                     <span className="text-primary font-bold group-hover:text-accent">{d.specialty}</span>
